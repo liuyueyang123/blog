@@ -11,7 +11,7 @@ export interface Article {
   excerpt: string;
   date: string;
   readTime: string;
-  content: string[];
+  content: string;
   isPublished?: boolean;
   sortOrder?: number;
 }
@@ -23,7 +23,7 @@ export interface ArticlePayload {
   excerpt: string;
   date: string;
   read_time: string;
-  content: string[];
+  content: string;
   is_published: boolean;
   sort_order: number;
 }

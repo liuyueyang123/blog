@@ -2,7 +2,7 @@
 
 from datetime import date, datetime
 
-from sqlalchemy import String, Text, Date, Boolean, Integer, DateTime, JSON, func
+from sqlalchemy import String, Text, Date, Boolean, Integer, DateTime, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base
@@ -18,7 +18,7 @@ class Article(Base):
     excerpt: Mapped[str] = mapped_column(Text, nullable=False, default="")
     date: Mapped[date] = mapped_column(Date, nullable=False)
     read_time: Mapped[str] = mapped_column(String(50), nullable=False, default="5 min")
-    content: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
+    content: Mapped[str] = mapped_column(Text, nullable=False, default="")
     is_published: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     sort_order: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     created_at: Mapped[datetime] = mapped_column(

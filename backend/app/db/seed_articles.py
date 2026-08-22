@@ -16,10 +16,19 @@ SEED_ARTICLES = [
         "excerpt": "从 systemd、残留进程和端口监听三个层面拆解一次启动失败。",
         "date": date(2026, 7, 1),
         "read_time": "6 min",
-        "content": [
-            "服务重启失败时，先不要急着反复 restart。更稳的路径是查看 systemd 状态、读取 journalctl 日志，再确认端口由哪个进程监听。",
-            "浏览器访问页面不会占用 Prometheus 的监听端口，真正的问题通常来自旧进程残留或服务管理混乱。",
-        ],
+        "content": """## 排查思路
+
+服务重启失败时，先不要急着反复 `restart`。更稳的路径是依次看 systemd 状态、读 journalctl 日志，再确认端口到底由哪个进程监听。
+
+```bash
+systemctl status prometheus
+journalctl -u prometheus -n 50 --no-pager
+ss -lntp | grep 9090
+```
+
+## 根因定位
+
+浏览器访问页面并不会占用 Prometheus 的监听端口，真正的问题通常来自旧进程残留或服务管理混乱，常见于直接 `kill` 后没有走 systemd 的停止流程。""",
     },
     {
         "slug": "docker-containerd-dockerd",
@@ -28,10 +37,18 @@ SEED_ARTICLES = [
         "excerpt": "理解 Docker 命令背后的运行时链路，避免磁盘清理时误判。",
         "date": date(2026, 7, 3),
         "read_time": "7 min",
-        "content": [
-            "Docker CLI 只是入口，dockerd 负责管理上层体验，containerd 则处理更底层的容器生命周期。",
-            "排查磁盘占用时需要同时看镜像层、容器数据、快照目录和命名空间。",
-        ],
+        "content": """## 运行时链路
+
+Docker CLI 只是入口，`dockerd` 负责管理上层体验，`containerd` 则处理更底层的容器生命周期。
+
+```bash
+docker info | grep -i runtime
+ctr version
+```
+
+## 磁盘排查
+
+排查磁盘占用时需要同时看镜像层、容器数据、快照目录和命名空间，不能只盯着 `docker system df`。""",
     },
     {
         "slug": "soft-link-hard-link",
@@ -40,10 +57,19 @@ SEED_ARTICLES = [
         "excerpt": "用 inode、路径和文件系统边界理解两类链接。",
         "date": date(2026, 7, 5),
         "read_time": "5 min",
-        "content": [
-            "硬链接指向同一个 inode，软链接保存的是路径。",
-            "理解这点后，删除源文件、跨文件系统和目录链接这些行为就不再靠死记。",
-        ],
+        "content": """## 核心区别
+
+硬链接指向同一个 inode，软链接保存的是路径。
+
+```bash
+ln target hardlink
+ln -s target softlink
+ls -li target hardlink softlink
+```
+
+## 边界行为
+
+理解这点后，删除源文件、跨文件系统和目录链接这些行为就不再靠死记。""",
     },
     {
         "slug": "transformer-multi-head-attention",
@@ -52,10 +78,19 @@ SEED_ARTICLES = [
         "excerpt": "从 Q/K/V、注意力分数到多头拼接理解 Transformer 的核心模块。",
         "date": date(2026, 7, 8),
         "read_time": "8 min",
-        "content": [
-            "多头注意力让模型从不同的子空间观察 token 之间的关系。",
-            "它不是简单重复，而是把表示拆成多个视角，再合并成更丰富的上下文表达。",
-        ],
+        "content": """## 为什么需要多头
+
+多头注意力让模型从不同的子空间观察 token 之间的关系。
+
+```python
+Q = x @ W_q
+K = x @ W_k
+V = x @ W_v
+```
+
+## 本质
+
+它不是简单重复，而是把表示拆成多个视角，再合并成更丰富的上下文表达。""",
     },
     {
         "slug": "resnet-gradient",
@@ -64,10 +99,17 @@ SEED_ARTICLES = [
         "excerpt": "残差连接如何让深层网络更容易训练。",
         "date": date(2026, 7, 10),
         "read_time": "6 min",
-        "content": [
-            "ResNet 的残差连接为梯度提供更直接的传播路径。",
-            "对图像分类项目来说，它能让较深模型在训练中保持稳定，但泛化仍依赖数据和训练策略。",
-        ],
+        "content": """## 残差连接
+
+ResNet 的残差连接为梯度提供更直接的传播路径。
+
+```python
+out = F.relu(x + shortcut(x))
+```
+
+## 影响
+
+对图像分类项目来说，它能让较深模型在训练中保持稳定，但泛化仍依赖数据和训练策略。""",
     },
 ]
 

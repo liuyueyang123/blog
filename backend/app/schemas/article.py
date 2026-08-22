@@ -1,7 +1,7 @@
 """文章 Pydantic v2 Schemas"""
 
-from datetime import date, datetime
-from typing import List, Optional
+import datetime
+from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_camel
@@ -14,9 +14,9 @@ class ArticleCreate(BaseModel):
     title: str = Field(..., min_length=1, max_length=300)
     category: str = Field(default="", max_length=100)
     excerpt: str = Field(default="")
-    date: date
+    date: datetime.date
     read_time: str = Field(default="5 min", max_length=50)
-    content: List[str] = Field(default_factory=list)
+    content: str = Field(default="")
     is_published: bool = True
     sort_order: int = 0
 
@@ -27,9 +27,9 @@ class ArticleUpdate(BaseModel):
     title: Optional[str] = Field(None, min_length=1, max_length=300)
     category: Optional[str] = Field(None, max_length=100)
     excerpt: Optional[str] = None
-    date: Optional[date] = None
+    date: Optional[datetime.date] = None
     read_time: Optional[str] = Field(None, max_length=50)
-    content: Optional[List[str]] = None
+    content: Optional[str] = None
     is_published: Optional[bool] = None
     sort_order: Optional[int] = None
 
@@ -52,13 +52,13 @@ class ArticleResponse(BaseModel):
     title: str
     category: str
     excerpt: str
-    date: date
+    date: datetime.date
     read_time: str
-    content: List[str]
+    content: str
 
     # 管理接口额外字段
     id: Optional[int] = None
     is_published: Optional[bool] = None
     sort_order: Optional[int] = None
-    created_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None
+    created_at: Optional[datetime.datetime] = None
+    updated_at: Optional[datetime.datetime] = None

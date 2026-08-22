@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter, RouterLink } from 'vue-router';
 import { getAdminArticles, createArticle, updateArticle } from '../api/articles';
+import { renderMarkdown } from '../utils/markdown';
 
 const route = useRoute();
 const router = useRouter();
@@ -19,7 +20,7 @@ const form = ref({
   excerpt: '',
   date: new Date().toISOString().slice(0, 10),
   read_time: '5 min',
-  content: '' as string, // textarea, split by newline into paragraphs
+  content: '', // Markdown 原文
   is_published: true,
   sort_order: 0,
 });
@@ -27,6 +28,8 @@ const form = ref({
 const loading = ref(false);
 const saving = ref(false);
 const error = ref('');
+
+const previewHtml = computed(() => renderMarkdown(form.value.content));
 
 onMounted(async () => {
   if (!isEdit.value) return;
@@ -42,7 +45,7 @@ onMounted(async () => {
       form.value.excerpt = found.excerpt;
       form.value.date = found.date;
       form.value.read_time = found.readTime;
-      form.value.content = found.content.join('\n');
+      form.value.content = found.content;
       form.value.is_published = found.isPublished ?? true;
       form.value.sort_order = found.sortOrder ?? 0;
     }
@@ -61,7 +64,7 @@ async function handleSave() {
     excerpt: form.value.excerpt,
     date: form.value.date,
     read_time: form.value.read_time,
-    content: form.value.content.split('\n').filter((p) => p.trim() !== ''),
+    content: form.value.content,
     is_published: form.value.is_published,
     sort_order: form.value.sort_order,
   };
@@ -123,8 +126,15 @@ async function handleSave() {
       </div>
 
       <div class="form-group">
-        <label>正文（每行一个段落）</label>
-        <textarea v-model="form.content" rows="8" placeholder="第一段&#10;第二段&#10;第三段"></textarea>
+        <label>正文（Markdown，左侧编写 / 右侧实时预览）</label>
+        <div class="md-editor">
+          <textarea
+            v-model="form.content"
+            class="md-editor-input"
+            placeholder="用 Markdown 编写正文，支持 ## 标题、**加粗**、- 列表、``` 代码块等"
+          ></textarea>
+          <div class="md-editor-preview markdown-preview" v-html="previewHtml"></div>
+        </div>
       </div>
 
       <div class="form-row">
@@ -151,3 +161,47 @@ async function handleSave() {
     </form>
   </div>
 </template>
+
+<style scoped>
+.md-editor {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.md-editor-input {
+  width: 100%;
+  min-height: 460px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: rgba(10, 14, 28, 0.6);
+  color: var(--text-primary);
+  font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.md-editor-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.md-editor-preview {
+  min-height: 460px;
+  max-height: 660px;
+  overflow-y: auto;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+@media (max-width: 720px) {
+  .md-editor {
+    grid-template-columns: 1fr;
+  }
+}
+</style>

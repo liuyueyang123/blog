@@ -48,7 +48,7 @@ export interface Article {
   excerpt: string;
   date: string;
   readTime: string;
-  content: string[];
+  content: string;
 }
 
 export interface TimelineItem {
