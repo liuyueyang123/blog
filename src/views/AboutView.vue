@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { profile } from '../data/profile';
-import { timeline } from '../data/timeline';
+import { useProfile } from '../composables/useProfile';
+import { useTimeline } from '../composables/useTimeline';
+
+const { profile } = useProfile();
+const { timeline } = useTimeline();
 </script>
 
 <template>
@@ -9,11 +12,11 @@ import { timeline } from '../data/timeline';
       <div>
         <p class="eyebrow">About</p>
         <h1 class="section-title">关于我</h1>
-        <p class="section-copy">
+        <p v-if="profile" class="section-copy">
           我是{{ profile.title }}，主要学习方向是 {{ profile.focus }}。我希望把项目实践、排障复盘和技术文章组织成一个长期维护的技术档案。
         </p>
       </div>
-      <aside class="card about-card">
+      <aside v-if="profile" class="card about-card">
         <strong>{{ profile.name }}</strong>
         <span>{{ profile.handle }}</span>
         <p>{{ profile.intro }}</p>

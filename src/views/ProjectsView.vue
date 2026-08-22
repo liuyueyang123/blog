@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import ProjectCard from '../components/projects/ProjectCard.vue';
 import { useRevealAnimations } from '../composables/useGsap';
-import { projects } from '../data/projects';
+import { useProjects } from '../composables/useProjects';
 
-useRevealAnimations();
+const { projects, loading } = useProjects();
+useRevealAnimations(loading);
 </script>
 
 <template>

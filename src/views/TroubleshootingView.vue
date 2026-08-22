@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import TroubleCard from '../components/troubleshooting/TroubleCard.vue';
 import { useRevealAnimations } from '../composables/useGsap';
-import { troubleshootingCases } from '../data/troubleshooting';
+import { useTroubleshooting } from '../composables/useTroubleshooting';
 
-useRevealAnimations();
+const { troubleshootingCases, loading } = useTroubleshooting();
+useRevealAnimations(loading);
 </script>
 
 <template>

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { useRoute, RouterLink } from 'vue-router';
 import { Github } from 'lucide-vue-next';
-import { projects } from '../data/projects';
+import { useProject } from '../composables/useProjects';
 
 const route = useRoute();
-const project = computed(() => projects.find((item) => item.slug === route.params.slug));
+const slug = route.params.slug as string;
+const { project } = useProject(slug);
 </script>
 
 <template>

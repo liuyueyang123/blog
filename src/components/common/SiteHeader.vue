@@ -2,8 +2,9 @@
 import { Menu, X } from 'lucide-vue-next';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
-import { socialLinks } from '../../data/socialLinks';
+import { useProfile } from '../../composables/useProfile';
 
+const { profile } = useProfile();
 const route = useRoute();
 const router = useRouter();
 const open = ref(false);
@@ -87,7 +88,7 @@ onBeforeUnmount(() => {
         >
           {{ item.label }}
         </a>
-        <a data-header-nav-link :href="socialLinks.githubUrl" target="_blank" rel="noreferrer">GitHub</a>
+        <a data-header-nav-link :href="profile?.socialLinks.githubUrl" target="_blank" rel="noreferrer">GitHub</a>
       </div>
     </nav>
   </header>

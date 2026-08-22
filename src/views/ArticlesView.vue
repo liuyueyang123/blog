@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { articles } from '../data/articles';
+import { useArticles } from '../composables/useArticles';
+
+const { articles } = useArticles();
 </script>
 
 <template>

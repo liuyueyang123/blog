@@ -6,14 +6,23 @@ import SectionHeader from '../components/common/SectionHeader.vue';
 import SkillGroupCard from '../components/skills/SkillGroupCard.vue';
 import ProjectCard from '../components/projects/ProjectCard.vue';
 import TroubleCard from '../components/troubleshooting/TroubleCard.vue';
+import { computed } from 'vue';
 import { useRevealAnimations } from '../composables/useGsap';
-import { skillGroups } from '../data/skills';
-import { projects } from '../data/projects';
-import { troubleshootingCases } from '../data/troubleshooting';
-import { articles } from '../data/articles';
-import { timeline } from '../data/timeline';
+import { useArticles } from '../composables/useArticles';
+import { useProjects } from '../composables/useProjects';
+import { useSkills } from '../composables/useSkills';
+import { useTroubleshooting } from '../composables/useTroubleshooting';
+import { useTimeline } from '../composables/useTimeline';
 
-useRevealAnimations();
+const { articles, loading: articlesLoading } = useArticles();
+const { projects, loading: projectsLoading } = useProjects();
+const { skillGroups, loading: skillsLoading } = useSkills();
+const { troubleshootingCases, loading: troubleshootingLoading } = useTroubleshooting();
+const { timeline, loading: timelineLoading } = useTimeline();
+
+// 任一异步数据源加载完成后，补扫新渲染的动画元素
+const asyncLoading = computed(() => articlesLoading.value || projectsLoading.value || skillsLoading.value || troubleshootingLoading.value || timelineLoading.value);
+useRevealAnimations(asyncLoading);
 </script>
 
 <template>

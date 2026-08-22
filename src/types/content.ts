@@ -56,3 +56,29 @@ export interface TimelineItem {
   title: string;
   detail: string;
 }
+
+export interface SocialLinks {
+  githubUrl: string;
+  email: string;
+  bilibiliUrl: string;
+  douyinUrl: string;
+  xiaohongshuUrl: string;
+  resumeUrl: string;
+}
+
+export interface CapabilityCard {
+  title: string;
+  tech: string;
+  practice: string;
+}
+
+export interface Profile {
+  name: string;
+  handle: string;
+  title: string;
+  focus: string;
+  intro: string;
+  location: string;
+  socialLinks: SocialLinks;
+  capabilityCards: CapabilityCard[];
+}

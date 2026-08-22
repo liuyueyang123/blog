@@ -18,6 +18,10 @@ node_modules/
 dist/
 .vite/
 
+# vue-tsc -b 生成的 vite 配置编译产物（勿提交，源文件是 vite.config.ts）
+vite.config.js
+vite.config.d.ts
+
 # 环境变量
 .env
 .env.*

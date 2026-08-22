@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { Github, Mail } from 'lucide-vue-next';
-import { profile } from '../../data/profile';
+import { useProfile } from '../../composables/useProfile';
+
+const { profile } = useProfile();
 </script>
 
 <template>
   <footer class="site-footer">
-    <div class="container footer-grid">
+    <div v-if="profile" class="container footer-grid">
       <div>
         <p class="footer-name">{{ profile.name }}</p>
         <p class="text-muted">{{ profile.focus }}</p>

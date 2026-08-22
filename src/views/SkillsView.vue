@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import SkillGroupCard from '../components/skills/SkillGroupCard.vue';
 import { useRevealAnimations } from '../composables/useGsap';
-import { skillGroups } from '../data/skills';
+import { useSkills } from '../composables/useSkills';
 
-useRevealAnimations();
+const { skillGroups, loading } = useSkills();
+useRevealAnimations(loading);
 </script>
 
 <template>

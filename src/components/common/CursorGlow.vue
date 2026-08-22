@@ -44,19 +44,20 @@ function emitFlair(x: number, y: number) {
   }, 980);
 }
 
-function trackPointer(event: MouseEvent | PointerEvent) {
+function trackPointer(event: Event) {
   if (!active.value) {
     return;
   }
 
+  const pointer = event as MouseEvent | PointerEvent;
   visible.value = true;
-  cursorX.value = event.clientX;
-  cursorY.value = event.clientY;
+  cursorX.value = pointer.clientX;
+  cursorY.value = pointer.clientY;
 
-  const distance = Math.hypot(lastEmit.x - event.clientX, lastEmit.y - event.clientY);
+  const distance = Math.hypot(lastEmit.x - pointer.clientX, lastEmit.y - pointer.clientY);
   if (distance > 8) {
-    emitFlair(event.clientX, event.clientY);
-    lastEmit = { x: event.clientX, y: event.clientY };
+    emitFlair(pointer.clientX, pointer.clientY);
+    lastEmit = { x: pointer.clientX, y: pointer.clientY };
   }
 }
 

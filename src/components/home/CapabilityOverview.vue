@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ArrowRight } from 'lucide-vue-next';
-import { capabilityCards } from '../../data/profile';
+import { useProfile } from '../../composables/useProfile';
 import SectionHeader from '../common/SectionHeader.vue';
+
+const { profile } = useProfile();
 
 function visualClass(index: number) {
   return ['visual-rings', 'visual-bars', 'visual-wave', 'visual-grid'][index % 4];
@@ -18,7 +20,7 @@ function visualClass(index: number) {
       />
       <div class="capability-grid" data-stagger>
         <RouterLink
-          v-for="(card, index) in capabilityCards"
+          v-for="(card, index) in profile?.capabilityCards ?? []"
           :key="card.title"
           class="capability-card card"
           to="/skills"

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { useRoute, RouterLink } from 'vue-router';
-import { articles } from '../data/articles';
+import { useArticle } from '../composables/useArticles';
 
 const route = useRoute();
-const article = computed(() => articles.find((item) => item.slug === route.params.slug));
+const slug = route.params.slug as string;
+const { article } = useArticle(slug);
 </script>
 
 <template>
