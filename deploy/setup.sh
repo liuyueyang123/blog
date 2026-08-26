@@ -110,7 +110,8 @@ firewall-cmd --permanent --add-service=http
 firewall-cmd --permanent --add-port=8081/tcp
 firewall-cmd --reload
 
-systemctl enable --now nginx
+systemctl enable nginx
+systemctl restart nginx
 
 echo ""
 echo "=============================================="
