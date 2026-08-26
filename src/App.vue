@@ -32,7 +32,7 @@ import CursorGlow from './components/common/CursorGlow.vue';
   background:
     radial-gradient(circle at 48% 24%, rgba(255, 207, 98, 0.16), transparent 24%),
     radial-gradient(circle at 60% 58%, rgba(84, 137, 255, 0.18), transparent 28%),
-    url("/images/global-starlight-portrait-cutout.png");
+    url("/images/global-starlight-portrait-cutout.webp");
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;

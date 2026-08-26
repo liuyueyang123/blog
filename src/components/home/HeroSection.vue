@@ -153,7 +153,7 @@ onBeforeUnmount(() => {
   opacity: 0.5;
   background:
     linear-gradient(180deg, rgba(13, 20, 37, 0.82), rgba(13, 20, 37, 0.34) 36%, rgba(13, 20, 37, 0.72) 100%),
-    url("/images/hero-flower-field.png");
+    url("/images/hero-flower-field.webp");
   background-size: cover;
   background-position: center bottom;
   filter: blur(2px) saturate(110%);
