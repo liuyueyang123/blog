@@ -34,7 +34,7 @@ else
   rm -rf "$APP_DIR"
   for i in 1 2 3 4 5; do
     echo "  第 $i 次尝试 clone（GitHub 国内偶发断连，自动重试）..."
-    git clone "$REPO_URL" "$APP_DIR" && break
+    git clone -b main "$REPO_URL" "$APP_DIR" && break
     echo "  clone 失败，3 秒后重试..."
     sleep 3
   done
