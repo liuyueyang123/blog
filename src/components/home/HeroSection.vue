@@ -1,23 +1,46 @@
 <script setup lang="ts">
 import { ArrowRight } from 'lucide-vue-next';
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import MagneticButton from '../common/MagneticButton.vue';
 
 const heroTitle = "Hello, I'm Yael.";
 const frameCount = 80;
 const frameRate = 12;
-const currentFrameIndex = ref(0);
 const isPhotoWallPaused = ref(false);
+const canvasRef = ref<HTMLCanvasElement | null>(null);
 
 const FRAME_DIR = '/video/photo-wall-frames-webp';
-const frames: string[] = Array.from(
+const frameSrcs: string[] = Array.from(
   { length: frameCount },
   (_, i) => `${FRAME_DIR}/frame-${String(i).padStart(3, '0')}.webp`,
 );
-const currentFrameSrc = computed(() => frames[currentFrameIndex.value]);
 
+const frames: HTMLImageElement[] = new Array(frameCount);
+let currentFrameIndex = 0;
 let animationId = 0;
 let lastFrameTime = 0;
+
+function loadFrame(i: number): Promise<void> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.decoding = 'sync';
+    img.onload = () => resolve();
+    img.onerror = () => resolve();
+    img.src = frameSrcs[i];
+    frames[i] = img;
+  });
+}
+
+function draw() {
+  const canvas = canvasRef.value;
+  const ctx = canvas?.getContext('2d');
+  if (!canvas || !ctx) return;
+  const img = frames[currentFrameIndex];
+  if (img && img.naturalWidth > 0) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  }
+}
 
 function animatePhotoWall(timestamp: number) {
   if (!lastFrameTime) {
@@ -26,7 +49,8 @@ function animatePhotoWall(timestamp: number) {
 
   const frameDuration = 1000 / frameRate;
   if (!isPhotoWallPaused.value && timestamp - lastFrameTime >= frameDuration) {
-    currentFrameIndex.value = (currentFrameIndex.value + 1) % frameCount;
+    currentFrameIndex = (currentFrameIndex + 1) % frameCount;
+    draw();
     lastFrameTime = timestamp;
   }
 
@@ -37,12 +61,14 @@ function togglePhotoWall() {
   isPhotoWallPaused.value = !isPhotoWallPaused.value;
 }
 
-onMounted(() => {
-  // 预加载全部帧，避免首次播放时逐帧现取导致的卡顿
-  frames.forEach((src) => {
-    const img = new Image();
-    img.src = src;
-  });
+onMounted(async () => {
+  // 先加载第一帧立即绘制，让主图快速出现
+  await loadFrame(0);
+  draw();
+
+  // 其余帧并行加载，全部就绪后再启动动画，杜绝逐帧现取的闪烁
+  await Promise.all(Array.from({ length: frameCount - 1 }, (_, i) => loadFrame(i + 1)));
+
   animationId = window.requestAnimationFrame(animatePhotoWall);
 });
 
@@ -101,7 +127,7 @@ onBeforeUnmount(() => {
         @keydown.space.prevent="togglePhotoWall"
       >
         <div class="photo-wall-depth" aria-hidden="true"></div>
-        <img class="photo-wall-animation" :src="currentFrameSrc" alt="3D scrolling photo wall" decoding="async" />
+        <canvas ref="canvasRef" class="photo-wall-animation" width="420" height="747" aria-hidden="true"></canvas>
       </aside>
     </div>
   </section>
@@ -279,12 +305,10 @@ h1 {
 .photo-wall-animation {
   position: relative;
   z-index: 1;
+  display: block;
   width: 100%;
-  aspect-ratio: 9 / 14;
-  max-height: min(70vh, 710px);
-  object-fit: contain;
-  border: 0;
-  border-radius: 0;
+  max-width: calc(min(70vh, 710px) * 420 / 747);
+  height: auto;
   background: transparent;
   filter: drop-shadow(0 30px 58px rgba(0, 0, 0, 0.42));
   transform: rotateX(4deg) rotateY(-9deg) rotateZ(0.8deg);
