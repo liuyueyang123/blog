@@ -39,6 +39,10 @@ class Settings(BaseSettings):
     jwt_algorithm: str = "HS256"
     jwt_expire_minutes: int = 1440  # 24 小时
 
+    # ── 文件上传 ────────────────────────────────────────────
+    upload_dir: str = "uploads"          # 图片存放目录（相对 cwd 或绝对路径）
+    max_upload_size_mb: int = 5          # 单张图片大小上限（MB）
+
     # ── 应用 ────────────────────────────────────────────────
     app_env: str = "development"
     cors_origins: List[str] = [

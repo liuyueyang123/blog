@@ -15,6 +15,7 @@ from app.api.v1.timeline import router as timeline_router
 from app.api.v1.admin_timeline import router as admin_timeline_router
 from app.api.v1.profile import router as profile_router
 from app.api.v1.admin_profile import router as admin_profile_router
+from app.api.v1.upload import router as upload_router
 
 api_v1_router = APIRouter(prefix="/api/v1")
 
@@ -35,5 +36,5 @@ api_v1_router.include_router(admin_troubleshooting_router)
 api_v1_router.include_router(admin_timeline_router)
 api_v1_router.include_router(admin_profile_router)
 
-# ── 以下路由将在后续阶段添加 ──
-# api_v1_router.include_router(upload_router)        # 阶段 7
+# ── 上传（需 JWT）──
+api_v1_router.include_router(upload_router)

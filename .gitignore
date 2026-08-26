@@ -51,6 +51,7 @@ desktop.ini
 
 # 后续后台运行数据
 /uploads/
+backend/uploads/
 *.db
 *.sqlite
 *.sqlite3

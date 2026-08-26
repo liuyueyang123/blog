@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter, RouterLink } from 'vue-router';
 import { getAdminArticles, createArticle, updateArticle } from '../api/articles';
 import { renderMarkdown } from '../utils/markdown';
+import { uploadImage } from '../api/upload';
 
 const route = useRoute();
 const router = useRouter();
@@ -30,6 +31,48 @@ const saving = ref(false);
 const error = ref('');
 
 const previewHtml = computed(() => renderMarkdown(form.value.content));
+
+const fileInput = ref<HTMLInputElement | null>(null);
+const textareaRef = ref<HTMLTextAreaElement | null>(null);
+const uploading = ref(false);
+
+function triggerUpload() {
+  fileInput.value?.click();
+}
+
+function insertAtCursor(text: string) {
+  const ta = textareaRef.value;
+  if (!ta) {
+    form.value.content += `\n${text}`;
+    return;
+  }
+  const start = ta.selectionStart ?? form.value.content.length;
+  const end = ta.selectionEnd ?? start;
+  form.value.content =
+    form.value.content.slice(0, start) + text + form.value.content.slice(end);
+  requestAnimationFrame(() => {
+    ta.focus();
+    const pos = start + text.length;
+    ta.setSelectionRange(pos, pos);
+  });
+}
+
+async function onFileChange(e: Event) {
+  const input = e.target as HTMLInputElement;
+  const file = input.files?.[0];
+  if (!file) return;
+  uploading.value = true;
+  error.value = '';
+  try {
+    const url = await uploadImage(file);
+    insertAtCursor(`![${file.name.replace(/[\[\]]/g, '')}](${url})`);
+  } catch (e: any) {
+    error.value = e.response?.data?.detail || '图片上传失败';
+  } finally {
+    uploading.value = false;
+    input.value = '';
+  }
+}
 
 onMounted(async () => {
   if (!isEdit.value) return;
@@ -127,8 +170,21 @@ async function handleSave() {
 
       <div class="form-group">
         <label>正文（Markdown，左侧编写 / 右侧实时预览）</label>
+        <div class="md-editor-toolbar">
+          <button type="button" class="btn btn-sm" :disabled="uploading" @click="triggerUpload">
+            {{ uploading ? '上传中...' : '🖼 上传图片' }}
+          </button>
+          <input
+            ref="fileInput"
+            type="file"
+            accept="image/jpeg,image/png,image/gif,image/webp"
+            class="hidden-file"
+            @change="onFileChange"
+          />
+        </div>
         <div class="md-editor">
           <textarea
+            ref="textareaRef"
             v-model="form.content"
             class="md-editor-input"
             placeholder="用 Markdown 编写正文，支持 ## 标题、**加粗**、- 列表、``` 代码块等"
@@ -163,6 +219,17 @@ async function handleSave() {
 </template>
 
 <style scoped>
+.md-editor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.hidden-file {
+  display: none;
+}
+
 .md-editor {
   display: grid;
   grid-template-columns: 1fr 1fr;

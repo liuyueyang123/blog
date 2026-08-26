@@ -3,6 +3,7 @@
 from sqlalchemy import inspect, select
 
 from app.db.base import engine, SessionLocal, Base
+import app.models  # noqa: F401  导入全部模型，确保 Base.metadata 注册所有表
 from app.models.admin import Admin
 from app.core.security import hash_password
 
