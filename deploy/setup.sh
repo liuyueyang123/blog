@@ -23,6 +23,7 @@ systemctl enable --now mysqld
 mysql -uroot <<SQL
 CREATE DATABASE IF NOT EXISTS portfolio_blog CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE USER IF NOT EXISTS 'blog'@'localhost' IDENTIFIED BY '${DB_PASSWORD}';
+ALTER USER 'blog'@'localhost' IDENTIFIED BY '${DB_PASSWORD}';
 GRANT ALL PRIVILEGES ON portfolio_blog.* TO 'blog'@'localhost';
 FLUSH PRIVILEGES;
 SQL
