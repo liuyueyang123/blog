@@ -7,8 +7,12 @@ BACKEND_DIR="$APP_DIR/backend"
 
 cd "$APP_DIR"
 
-echo "==> 拉取最新代码"
-git pull origin main
+echo "==> 拉取最新代码（GitHub 国内偶发断连，自动重试）"
+for i in 1 2 3 4 5; do
+  git pull origin main && break
+  echo "  拉取失败，3 秒后重试..."
+  sleep 3
+done
 
 echo "==> 更新后端依赖（如有变化）"
 cd "$BACKEND_DIR"

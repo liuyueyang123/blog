@@ -28,10 +28,20 @@ FLUSH PRIVILEGES;
 SQL
 
 echo "==> [3/8] 克隆代码（请确认仓库为公开，否则 clone 会失败）"
-if [ ! -d "$APP_DIR/.git" ]; then
-  git clone "$REPO_URL" "$APP_DIR"
-else
+if [ -d "$APP_DIR/.git" ]; then
   echo "  已存在 $APP_DIR，跳过 clone"
+else
+  rm -rf "$APP_DIR"
+  for i in 1 2 3 4 5; do
+    echo "  第 $i 次尝试 clone（GitHub 国内偶发断连，自动重试）..."
+    git clone "$REPO_URL" "$APP_DIR" && break
+    echo "  clone 失败，3 秒后重试..."
+    sleep 3
+  done
+  if [ ! -d "$APP_DIR/.git" ]; then
+    echo "❌ 多次 clone 均失败，请检查网络后重跑本脚本" >&2
+    exit 1
+  fi
 fi
 
 echo "==> [4/8] 后端 Python 虚拟环境 + 依赖"
