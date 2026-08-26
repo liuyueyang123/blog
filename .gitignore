@@ -21,6 +21,7 @@ dist/
 # vue-tsc -b 生成的 vite 配置编译产物（勿提交，源文件是 vite.config.ts）
 vite.config.js
 vite.config.d.ts
+*.tsbuildinfo
 
 # 环境变量
 .env
@@ -41,6 +42,9 @@ desktop.ini
 
 # 根目录中的设计参考素材
 /images/
+
+# 照片墙原始素材（PNG 帧 + APNG 母版，已转 WebP，不部署）
+/_source-assets/
 
 # 下载的 GSAP 示例工程
 /flair-cursor-follower/

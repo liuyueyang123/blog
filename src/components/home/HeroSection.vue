@@ -9,10 +9,12 @@ const frameRate = 12;
 const currentFrameIndex = ref(0);
 const isPhotoWallPaused = ref(false);
 
-const currentFrameSrc = computed(() => {
-  const frame = String(currentFrameIndex.value).padStart(3, '0');
-  return `/video/photo-wall-frames/frame-${frame}.png`;
-});
+const FRAME_DIR = '/video/photo-wall-frames-webp';
+const frames: string[] = Array.from(
+  { length: frameCount },
+  (_, i) => `${FRAME_DIR}/frame-${String(i).padStart(3, '0')}.webp`,
+);
+const currentFrameSrc = computed(() => frames[currentFrameIndex.value]);
 
 let animationId = 0;
 let lastFrameTime = 0;
@@ -36,6 +38,11 @@ function togglePhotoWall() {
 }
 
 onMounted(() => {
+  // 预加载全部帧，避免首次播放时逐帧现取导致的卡顿
+  frames.forEach((src) => {
+    const img = new Image();
+    img.src = src;
+  });
   animationId = window.requestAnimationFrame(animatePhotoWall);
 });
 
@@ -94,7 +101,7 @@ onBeforeUnmount(() => {
         @keydown.space.prevent="togglePhotoWall"
       >
         <div class="photo-wall-depth" aria-hidden="true"></div>
-        <img class="photo-wall-animation" :src="currentFrameSrc" alt="3D scrolling photo wall" />
+        <img class="photo-wall-animation" :src="currentFrameSrc" alt="3D scrolling photo wall" decoding="async" />
       </aside>
     </div>
   </section>
