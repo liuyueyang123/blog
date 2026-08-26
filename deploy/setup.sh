@@ -64,6 +64,11 @@ echo "==> [6/8] 初始化数据库（建表 + 管理员 + seed）"
 ./venv/bin/python -m app.db.seed_phase6
 
 echo "==> [7/8] 构建前端（主站 + 后台）"
+# 2G 内存跑 vue-tsc 构建偏紧，先预置 2G swap 防 OOM
+if ! swapon --show 2>/dev/null | grep -q /swapfile; then
+  fallocate -l 2G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile
+  grep -q '/swapfile' /etc/fstab || echo '/swapfile none swap sw 0 0' >> /etc/fstab
+fi
 cd "$APP_DIR"
 npm ci
 npm run build
