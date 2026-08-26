@@ -6,7 +6,7 @@ set -euo pipefail
 
 DB_PASSWORD="${DB_PASSWORD:?用法: DB_PASSWORD='xxx' bash setup.sh}"
 
-REPO_URL="https://github.com/liuyueyang123/blog.git"
+REPO_URL="https://gitee.com/lanyangyang1111234/my-blog.git"
 APP_DIR="/opt/blog"
 BACKEND_DIR="$APP_DIR/backend"
 
