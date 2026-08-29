@@ -12,13 +12,16 @@ from app.utils.response import success
 
 settings = get_settings()
 
+# 生产环境关闭 Swagger/ReDoc/OpenAPI 文档，避免暴露接口结构
+_is_prod = settings.app_env == "production"
+
 app = FastAPI(
     title="Yael Portfolio Blog API",
     description="技术作品集 + 博客后端 API",
     version="0.1.0",
-    docs_url="/api/docs",
-    redoc_url="/api/redoc",
-    openapi_url="/api/openapi.json",
+    docs_url=None if _is_prod else "/api/docs",
+    redoc_url=None if _is_prod else "/api/redoc",
+    openapi_url=None if _is_prod else "/api/openapi.json",
 )
 
 # ── CORS ──────────────────────────────────────────────────
