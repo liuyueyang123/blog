@@ -362,6 +362,10 @@ h1 {
   h1 {
     font-size: clamp(32px, 9.2vw, 52px);
   }
+
+  .hero-actions {
+    display: none;
+  }
 }
 
 @media (max-width: 520px) {
